@@ -58,4 +58,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/fix-storage', function () {
+    try {
+        Artisan::call('storage:link');
+        return "Storage link created successfully! Your PDFs should now be visible.";
+    } catch (\Exception $e) {
+        return "Error creating link: " . $e->getMessage();
+    }
+});
+
 require __DIR__.'/auth.php';
