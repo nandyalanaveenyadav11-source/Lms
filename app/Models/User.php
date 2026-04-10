@@ -3,14 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
+    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
     /**
@@ -18,43 +17,7 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'role',
-        'domain',
-    ];
-
-    public function isAdmin()
-    {
-        return $this->role === 'admin';
-    }
-
-    public function isTrainee()
-    {
-        return $this->role === 'trainee';
-    }
-
-    public function courses()
-    {
-        return $this->belongsToMany(Course::class)->withPivot('status')->withTimestamps();
-    }
-
-    public function completedLessons()
-    {
-        return $this->belongsToMany(Lesson::class, 'lesson_user')->withTimestamps();
-    }
-
-    public function results()
-    {
-        return $this->hasMany(Result::class);
-    }
-
-    public function certificates()
-    {
-        return $this->hasMany(Certificate::class);
-    }
+    protected $guarded = [];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -65,6 +28,23 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    // Helper methods for role checking
+
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isInstructor()
+    {
+        return $this->role === 'instructor';
+    }
+
+    public function isUser()
+    {
+        return $this->role === 'user';
+    }
 
     /**
      * Get the attributes that should be cast.

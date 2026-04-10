@@ -6,48 +6,26 @@ use Illuminate\Database\Eloquent\Model;
 
 class Course extends Model
 {
-    protected $fillable = ['title', 'description', 'duration', 'domain', 'created_by'];
+    protected $guarded = [];
 
-    public function lessons()
+    public function category()
     {
-        return $this->hasMany(Lesson::class)->orderBy('order');
+        return $this->belongsTo(Category::class, 'category_id', 'id');
     }
 
-    public function trainees()
+    public function subCategory()
     {
-        return $this->belongsToMany(User::class)->withPivot('status')->withTimestamps();
+        return $this->belongsTo(SubCategory::class, 'subcategory_id', 'id');
     }
 
-    public function quiz()
+    public function user()
     {
-        return $this->hasOne(Quiz::class);
+        return $this->belongsTo(User::class, 'instructor_id', 'id');
     }
 
-    public function creator()
+    public function course_goal()
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->hasMany(CourseGoal::class, 'course_id', 'id');
     }
 
-    public function getDurationDisplayAttribute()
-    {
-        $totalSeconds = $this->lessons()->sum('duration_seconds');
-        
-        if ($totalSeconds > 0) {
-            $hours = floor($totalSeconds / 3600);
-            $minutes = floor(($totalSeconds % 3600) / 60);
-            
-            $display = '';
-            if ($hours > 0) $display .= "{$hours}h ";
-            if ($minutes > 0 || $hours == 0) $display .= "{$minutes}m";
-            
-            return trim($display);
-        }
-
-        $lessonCount = $this->lessons()->count();
-        if ($lessonCount > 0) {
-            return $lessonCount . ' ' . ($lessonCount === 1 ? 'Lesson' : 'Lessons');
-        }
-        
-        return "No Content";
-    }
 }
