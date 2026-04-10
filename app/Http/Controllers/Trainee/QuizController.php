@@ -22,8 +22,15 @@ class QuizController extends Controller
         $quiz = $course->quiz;
         if (!$quiz) abort(404);
 
-        if (\App\Models\Result::where('user_id', auth()->id())->where('quiz_id', $quiz->id)->exists()) {
-            return redirect()->route('trainee.quizzes.result', $course)->with('error', 'You have already attempted this quiz.');
+        $attempts = \App\Models\Result::where('user_id', auth()->id())->where('quiz_id', $quiz->id)->get();
+        $bestResult = $attempts->where('passed', true)->first();
+        
+        if ($bestResult) {
+            return redirect()->route('trainee.quizzes.result', $course)->with('info', 'You have already passed this quiz!');
+        }
+
+        if ($attempts->count() >= 5) {
+            return redirect()->route('trainee.quizzes.result', $course)->with('error', 'You have reached the maximum of 5 attempts for this quiz.');
         }
 
         // Check if all lessons are completed
@@ -39,15 +46,20 @@ class QuizController extends Controller
         }
 
         $quiz->load('questions');
-        return view('trainee.quizzes.show', compact('course', 'quiz'));
+        return view('trainee.quizzes.show', compact('course', 'quiz', 'attempts'));
     }
 
     public function submit(\Illuminate\Http\Request $request, \App\Models\Course $course)
     {
         $quiz = $course->quiz;
         
-        if (\App\Models\Result::where('user_id', auth()->id())->where('quiz_id', $quiz->id)->exists()) {
-            return redirect()->route('trainee.quizzes.result', $course)->with('error', 'You have already attempted this quiz.');
+        $attempts = \App\Models\Result::where('user_id', auth()->id())->where('quiz_id', $quiz->id)->get();
+        if ($attempts->where('passed', true)->first()) {
+            return redirect()->route('trainee.quizzes.result', $course)->with('error', 'You have already passed this quiz.');
+        }
+
+        if ($attempts->count() >= 5) {
+            return redirect()->route('trainee.quizzes.result', $course)->with('error', 'Maximum attempts reached.');
         }
 
         $questions = $quiz->questions;
@@ -92,14 +104,15 @@ class QuizController extends Controller
         $quiz = $course->quiz;
         if (!$quiz) abort(404);
 
-        $result = \App\Models\Result::where('user_id', auth()->id())->where('quiz_id', $quiz->id)->first();
+        $result = \App\Models\Result::where('user_id', auth()->id())->where('quiz_id', $quiz->id)->latest()->first();
         if (!$result) {
             return redirect()->route('trainee.quizzes.show', $course)->with('info', 'Please attempt the quiz first.');
         }
 
         $questions = $quiz->questions;
         $userAnswers = is_string($result->answers) ? json_decode($result->answers, true) : ($result->answers ?? []);
+        $attemptsCount = \App\Models\Result::where('user_id', auth()->id())->where('quiz_id', $quiz->id)->count();
 
-        return view('trainee.quizzes.result', compact('course', 'quiz', 'result', 'userAnswers', 'questions'));
+        return view('trainee.quizzes.result', compact('course', 'quiz', 'result', 'userAnswers', 'questions', 'attemptsCount'));
     }
 }

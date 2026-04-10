@@ -25,8 +25,8 @@ class CourseSeeder extends Seeder
 
         $lessons = [
             ['title' => 'Introduction to Laravel', 'video_url' => 'https://www.youtube.com/watch?v=MYyJ4PuL4pY', 'order' => 1],
-            ['title' => 'Installation and Setup', 'video_url' => 'https://www.youtube.com/watch?v=f-B5XGfL1U4', 'order' => 2],
-            ['title' => 'Routing and Controllers', 'video_url' => 'https://www.youtube.com/watch?v=8p_AnWw5aM0', 'order' => 3],
+            ['title' => 'Installation and Setup', 'video_url' => 'https://www.youtube.com/watch?v=R9j0Hdf8L_0', 'order' => 2],
+            ['title' => 'Routing and Controllers', 'video_url' => 'https://www.youtube.com/watch?v=L80pMv3v6yI', 'order' => 3],
         ];
 
         foreach ($lessons as $lesson) {

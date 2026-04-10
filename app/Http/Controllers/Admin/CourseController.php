@@ -66,7 +66,13 @@ class CourseController extends Controller
     public function show(\App\Models\Course $course)
     {
         $course->load('lessons', 'trainees');
-        $allTrainees = \App\Models\User::where('role', 'trainee')->get();
+        
+        $query = \App\Models\User::where('role', 'trainee');
+        if ($course->domain) {
+            $query->where('domain', $course->domain);
+        }
+        
+        $allTrainees = $query->get();
         return view('admin.courses.show', compact('course', 'allTrainees'));
     }
 

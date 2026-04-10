@@ -147,50 +147,58 @@
             
         .btn-start:hover {
             background: #0ea5e9; color: #ffffff; transform: scale(1.05); box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3); } 
+
+        /* Premium Scrollbar for Courses */
+        #courses-scroll-area::-webkit-scrollbar { width: 6px; }
+        #courses-scroll-area::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+        #courses-scroll-area::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        #courses-scroll-area::-webkit-scrollbar-thumb:hover { background: #0ea5e9; }
     </style>
 
-    <!-- Super Premium Stats Row -->
-    <div class="row g-4 mb-5">
-        <div class="col-md-3">
-            <div class="stat-card gradient-primary">
-                <div class="stat-bg-shape"></div>
-                <div class="stat-bg-shape-2"></div>
-                <i class="fas fa-book-open stat-icon"></i>
-                <div class="stat-title">Assigned Courses</div>
-                <div class="stat-value">{{ $total_assigned_courses }}</div>
+    <!-- Super Premium Stats Row (Sticky) -->
+    <div class="sticky-top pt-2 pb-3 mb-4" style="background: #f8fafc; z-index: 100; margin-top: -1rem; transition: all 0.3s ease;">
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="stat-card gradient-primary">
+                    <div class="stat-bg-shape"></div>
+                    <div class="stat-bg-shape-2"></div>
+                    <i class="fas fa-book-open stat-icon"></i>
+                    <div class="stat-title">Assigned Courses</div>
+                    <div class="stat-value">{{ $total_assigned_courses }}</div>
+                </div>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stat-card gradient-success">
-                <div class="stat-bg-shape"></div>
-                <div class="stat-bg-shape-2"></div>
-                <i class="fas fa-check-circle stat-icon"></i>
-                <div class="stat-title">Completed Courses</div>
-                <div class="stat-value">{{ $completed_courses }}</div>
+            <div class="col-md-3">
+                <div class="stat-card gradient-success">
+                    <div class="stat-bg-shape"></div>
+                    <div class="stat-bg-shape-2"></div>
+                    <i class="fas fa-check-circle stat-icon"></i>
+                    <div class="stat-title">Completed Courses</div>
+                    <div class="stat-value">{{ $completed_courses }}</div>
+                </div>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stat-card gradient-purple">
-                <div class="stat-bg-shape"></div>
-                <div class="stat-bg-shape-2"></div>
-                <i class="fas fa-clipboard-check stat-icon"></i>
-                <div class="stat-title">Completed Quizzes</div>
-                <div class="stat-value">{{ $completed_quizzes }}</div>
+            <div class="col-md-3">
+                <div class="stat-card gradient-purple">
+                    <div class="stat-bg-shape"></div>
+                    <div class="stat-bg-shape-2"></div>
+                    <i class="fas fa-clipboard-check stat-icon"></i>
+                    <div class="stat-title">Completed Quizzes</div>
+                    <div class="stat-value">{{ $completed_quizzes }}</div>
+                </div>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stat-card gradient-warning">
-                <div class="stat-bg-shape"></div>
-                <div class="stat-bg-shape-2"></div>
-                <i class="fas fa-award stat-icon"></i>
-                <div class="stat-title">Certificates Won</div>
-                <div class="stat-value">{{ $total_certificates }}</div>
+            <div class="col-md-3">
+                <div class="stat-card gradient-warning">
+                    <div class="stat-bg-shape"></div>
+                    <div class="stat-bg-shape-2"></div>
+                    <i class="fas fa-award stat-icon"></i>
+                    <div class="stat-title">Certificates Won</div>
+                    <div class="stat-value">{{ $total_certificates }}</div>
+                </div>
             </div>
         </div>
     </div>
 
     <h3 class="section-title">My Learning Path</h3>
-    <div class="row g-4 mb-5">
+    <div id="courses-scroll-area" class="row g-4 mb-5" style="max-height: 800px; overflow-y: auto; overflow-x: hidden; padding-right: 5px;">
         @foreach($assigned_courses as $course)
         <div class="col-lg-6">
             <div class="course-card">

@@ -12,9 +12,10 @@ class QuizController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'passing_marks' => 'required|integer|min:0|max:100',
+            'duration_minutes' => 'required|integer|min:1',
         ]);
 
-        $course->quiz()->create($request->only('title', 'passing_marks'));
+        $course->quiz()->create($request->only('title', 'passing_marks', 'duration_minutes'));
 
         return back()->with('success', 'Quiz created successfully.');
     }
@@ -30,9 +31,10 @@ class QuizController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'passing_marks' => 'required|integer|min:0|max:100',
+            'duration_minutes' => 'required|integer|min:1',
         ]);
 
-        $quiz->update($request->only('title', 'passing_marks'));
+        $quiz->update($request->only('title', 'passing_marks', 'duration_minutes'));
 
         return back()->with('success', 'Quiz updated successfully.');
     }

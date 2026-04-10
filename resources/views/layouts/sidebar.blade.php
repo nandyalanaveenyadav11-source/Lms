@@ -15,6 +15,11 @@
         </a>
     </li>
     <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('admin.domains.*') ? 'active' : '' }}" href="{{ route('admin.domains.index') }}">
+            <i class="fas fa-sitemap"></i> Domains
+        </a>
+    </li>
+    <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}" href="{{ route('admin.reports.index') }}">
             <i class="fas fa-file-alt"></i> Reports
         </a>

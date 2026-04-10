@@ -23,6 +23,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('trainees', Admin\TraineeController::class);
     
     Route::resource('courses', Admin\CourseController::class);
+    Route::resource('domains', Admin\DomainController::class);
     Route::post('courses/{course}/assign', [Admin\CourseController::class, 'assign'])->name('courses.assign');
     Route::post('courses/{course}/import-playlist', [Admin\CourseController::class, 'importPlaylist'])->name('courses.import-playlist');
     Route::post('courses/{course}/sync-durations', [Admin\CourseController::class, 'syncDurations'])->name('courses.sync-durations');

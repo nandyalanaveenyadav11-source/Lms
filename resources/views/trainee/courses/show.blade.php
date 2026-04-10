@@ -40,6 +40,11 @@
                         <div class="ratio ratio-16x9">
                             <iframe src="{{ $activeLesson->embed_url }}" title="{{ $activeLesson->title }}" allowfullscreen></iframe>
                         </div>
+                        <div class="px-3 pt-2 text-end">
+                            <a href="{{ $activeLesson->video_url }}" target="_blank" class="text-muted small text-decoration-none hover-primary">
+                                <i class="fab fa-youtube text-danger me-1"></i> Video not loading? Watch on YouTube <i class="fas fa-external-link-alt ms-1" style="font-size: 0.7rem;"></i>
+                            </a>
+                        </div>
                     @endif
 
                     <div class="card-body">

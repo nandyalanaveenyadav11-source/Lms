@@ -86,6 +86,16 @@
 
         .enrolled-list-item { border: 1px solid #f1f5f9; border-radius: 12px; margin-bottom: 0.5rem; transition: all 0.2s; }
         .enrolled-list-item:hover { background: #f8fafc; border-color: #e2e8f0; transform: translateX(5px); }
+
+        /* Premium Scrollbar */
+        #roster-scroll-area::-webkit-scrollbar, 
+        .custom-select-multiple::-webkit-scrollbar { width: 6px; }
+        #roster-scroll-area::-webkit-scrollbar-track,
+        .custom-select-multiple::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+        #roster-scroll-area::-webkit-scrollbar-thumb,
+        .custom-select-multiple::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        #roster-scroll-area::-webkit-scrollbar-thumb:hover,
+        .custom-select-multiple::-webkit-scrollbar-thumb:hover { background: #0ea5e9; }
     </style>
 
     <div class="row">
@@ -237,9 +247,13 @@
                     <form action="{{ route('admin.courses.assign', $course) }}" method="POST">
                         @csrf
                         <div class="mb-4">
-                            <select name="trainee_ids[]" class="form-select custom-select-multiple w-100" multiple style="height: 250px;">
+                            <div class="input-group mb-2 shadow-sm">
+                                <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted small"></i></span>
+                                <input type="text" id="trainee-search" class="form-control border-start-0 ps-0" placeholder="Search by name..." style="font-size: 0.85rem;">
+                            </div>
+                            <select name="trainee_ids[]" id="trainee-select" class="form-select custom-select-multiple w-100" multiple style="height: 250px;">
                                 @foreach($allTrainees as $trainee)
-                                    <option value="{{ $trainee->id }}" {{ $course->trainees->contains($trainee->id) ? 'selected' : '' }}>
+                                    <option value="{{ $trainee->id }}" {{ $course->trainees->contains($trainee->id) ? 'selected' : '' }} data-name="{{ strtolower($trainee->name) }}">
                                         {{ $trainee->name }} @if($trainee->domain) - {{ $trainee->domain }} @endif
                                     </option>
                                 @endforeach
@@ -248,6 +262,22 @@
                         </div>
                         <button type="submit" class="btn btn-gradient-primary w-100 py-2 fs-6 shadow">Update Manual Enrollment</button>
                     </form>
+
+                    <script>
+                        document.getElementById('trainee-search').addEventListener('input', function(e) {
+                            const term = e.target.value.toLowerCase();
+                            const options = document.querySelectorAll('#trainee-select option');
+                            
+                            options.forEach(option => {
+                                const name = option.getAttribute('data-name');
+                                if (name.includes(term)) {
+                                    option.style.display = 'block';
+                                } else {
+                                    option.style.display = 'none';
+                                }
+                            });
+                        });
+                    </script>
                 </div>
             </div>
 
@@ -256,7 +286,8 @@
                     <h5><i class="fas fa-users text-success me-2"></i> Active Roster</h5>
                 </div>
                 <div class="card-body p-3 pt-0">
-                    <ul class="list-unstyled mb-0">
+                    <div id="roster-scroll-area" style="max-height: 400px; overflow-y: auto; padding-right: 5px;">
+                        <ul class="list-unstyled mb-0">
                         @forelse($course->trainees as $trainee)
                             <li class="enrolled-list-item p-3 d-flex justify-content-between align-items-center">
                                 <div class="d-flex align-items-center gap-2">
@@ -274,6 +305,7 @@
                             </div>
                         @endforelse
                     </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -336,9 +368,15 @@
                             <label class="form-label fw-bold text-muted small text-uppercase">Quiz Title</label>
                             <input type="text" name="title" class="form-control" placeholder="e.g. Final Assessment Exam" required>
                         </div>
-                        <div class="mb-2">
-                            <label class="form-label fw-bold text-muted small text-uppercase">Passing Marks Requirement (%)</label>
-                            <input type="number" name="passing_marks" class="form-control form-control-lg text-center fs-3 text-success fw-bold" min="0" max="100" value="70" required>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-muted small text-uppercase">Passing Marks (%)</label>
+                                <input type="number" name="passing_marks" class="form-control form-control-lg text-center fs-3 text-success fw-bold" min="0" max="100" value="70" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-muted small text-uppercase">Time Limit (Mins)</label>
+                                <input type="number" name="duration_minutes" class="form-control form-control-lg text-center fs-3 text-primary fw-bold" min="1" value="15" required>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">

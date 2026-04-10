@@ -7,11 +7,47 @@
                 <div class="small mt-1"><i class="fas fa-link me-1 text-primary"></i> <span class="text-secondary">{{ $course->title }}</span></div>
             </div>
             <div class="d-flex gap-2">
+                <button class="btn btn-outline-secondary rounded-pill px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#editQuizModal"><i class="fas fa-cog me-2"></i> Settings</button>
                 <button class="btn btn-soft-info rounded-pill px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#importExcelModal"><i class="fas fa-file-excel me-2"></i> Import Excel/CSV</button>
                 <button class="btn btn-gradient-primary rounded-pill px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#addQuestionModal"><i class="fas fa-plus me-2"></i> Add Question</button>
             </div>
         </div>
     </x-slot>
+
+    <!-- Edit Quiz Modal -->
+    <div class="modal fade" id="editQuizModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <form action="{{ route('admin.courses.quizzes.update', [$course, $quiz]) }}" method="POST" class="w-100">
+                @csrf @method('PUT')
+                <div class="modal-content border-top border-primary border-5">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold text-dark"><i class="fas fa-cog text-primary me-2"></i>Quiz Settings</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-muted small text-uppercase">Quiz Title</label>
+                            <input type="text" name="title" class="form-control" value="{{ $quiz->title }}" required>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-muted small text-uppercase">Passing Marks (%)</label>
+                                <input type="number" name="passing_marks" class="form-control form-control-lg text-center fs-3 text-success fw-bold" min="0" max="100" value="{{ $quiz->passing_marks }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-muted small text-uppercase">Time Limit (Mins)</label>
+                                <input type="number" name="duration_minutes" class="form-control form-control-lg text-center fs-3 text-primary fw-bold" min="1" value="{{ $quiz->duration_minutes }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 shadow">Save Changes</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <style>
         .btn-soft-info { background: #e0f2fe; color: #0284c7; border: none; font-weight: 600; transition: all 0.3s; }

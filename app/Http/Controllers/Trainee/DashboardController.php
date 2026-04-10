@@ -15,7 +15,7 @@ class DashboardController extends Controller
             'completed_courses' => $user->courses()->wherePivot('status', 'completed')->count(),
             'completed_quizzes' => $user->results()->where('passed', true)->count(),
             'total_certificates' => $user->certificates()->count(),
-            'assigned_courses' => $user->courses()->take(4)->get(),
+            'assigned_courses' => $user->courses()->get(),
         ];
 
         return view('trainee.dashboard', $data);

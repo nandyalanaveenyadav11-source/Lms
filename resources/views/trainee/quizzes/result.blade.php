@@ -23,10 +23,23 @@
                         <h2 class="text-danger fw-bold">Better Luck Next Time!</h2>
                         <p class="lead">You scored <strong>{{ $result->score }}%</strong>. You need at least {{ $quiz->passing_marks }}% to pass.</p>
                         <hr>
-                        <p>You can review the course material and try again.</p>
-                        <div class="mt-4">
-                            <a href="{{ route('trainee.courses.show', $course) }}" class="btn btn-outline-primary btn-lg px-4">Back to Course</a>
+                        <div class="mb-4">
+                            <span class="badge bg-soft-secondary text-muted px-3 py-2 rounded-pill">
+                                Attempt {{ $attemptsCount }} of 5
+                            </span>
                         </div>
+                        @if($attemptsCount < 5)
+                            <p>Don't worry! You have {{ 5 - $attemptsCount }} attempts remaining.</p>
+                            <div class="mt-4 gap-2 d-flex justify-content-center">
+                                <a href="{{ route('trainee.courses.show', $course) }}" class="btn btn-outline-secondary px-4">Back to Course</a>
+                                <a href="{{ route('trainee.quizzes.show', $course) }}" class="btn btn-primary px-4">Retake Quiz</a>
+                            </div>
+                        @else
+                            <p class="text-danger">Maximum attempts (5) reached. Please contact your administrator.</p>
+                            <div class="mt-4">
+                                <a href="{{ route('trainee.courses.show', $course) }}" class="btn btn-outline-secondary px-4">Back to Course</a>
+                            </div>
+                        @endif
                     @endif
                 </div>
             </div>
