@@ -24,7 +24,17 @@
                         $isPlaylistRedirect = str_contains($activeLesson->video_url, 'list=') && !$videoId;
                     @endphp
 
-                    @if($isPlaylistRedirect)
+                    @if($activeLesson->type === 'pdf')
+                        {{-- PDF Viewer --}}
+                        <div class="ratio ratio-4x3 bg-light" style="border-radius: 12px; overflow: hidden; border: 1px solid #e1e8ed;">
+                            <iframe src="{{ $activeLesson->content_url }}" title="{{ $activeLesson->title }}"></iframe>
+                        </div>
+                        <div class="px-3 pt-2 text-end">
+                            <a href="{{ $activeLesson->content_url }}" target="_blank" download class="btn btn-sm btn-outline-primary rounded-pill">
+                                <i class="fas fa-download me-1"></i> Download PDF for Offline Reading
+                            </a>
+                        </div>
+                    @elseif($isPlaylistRedirect)
                         {{-- Redirect to YouTube for Playlists --}}
                         <div class="position-relative cursor-pointer" onclick="window.open('{{ $activeLesson->video_url }}', '_blank')">
                             <img src="https://img.youtube.com/vi/{{ $videoId }}/maxresdefault.jpg" class="card-img-top" style="height: 450px; object-fit: cover;" onerror="this.src='https://img.youtube.com/vi/{{ $videoId }}/0.jpg'">
@@ -37,7 +47,7 @@
                         </div>
                     @else
                         {{-- Embed single video on website --}}
-                        <div class="ratio ratio-16x9">
+                        <div class="ratio ratio-16x9 shadow-sm" style="border-radius: 12px; overflow: hidden;">
                             <iframe src="{{ $activeLesson->embed_url }}" title="{{ $activeLesson->title }}" allowfullscreen></iframe>
                         </div>
                         <div class="px-3 pt-2 text-end">
@@ -117,7 +127,8 @@
                         <a href="{{ route('trainee.courses.show', [$course, 'lesson' => $lesson->id]) }}" 
                            class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3 border-start border-4 {{ $activeLessonId == $lesson->id ? 'bg-light border-primary fw-bold text-primary' : 'border-transparent' }}">
                             <div class="d-flex align-items-center">
-                                <span class="badge bg-light text-muted rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; font-size: 0.75rem;">{{ $lesson->order }}</span>
+                                <span class="badge bg-light text-muted rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; font-size: 0.7rem;">{{ $lesson->order }}</span>
+                                <i class="fas {{ $lesson->type == 'pdf' ? 'fa-file-pdf text-danger' : 'fa-play-circle text-primary' }} me-2 opacity-75"></i>
                                 <span style="font-size: 0.95rem;">{{ $lesson->title }}</span>
                             </div>
                             @if(in_array($lesson->id, $completedLessonIds))

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Lesson extends Model
 {
-    protected $fillable = ['course_id', 'title', 'video_url', 'duration_seconds', 'order'];
+    protected $fillable = ['course_id', 'title', 'type', 'video_url', 'content_path', 'duration_seconds', 'order'];
 
     public function course()
     {
@@ -15,8 +15,6 @@ class Lesson extends Model
 
     public function getEmbedUrlAttribute()
     {
-        // Convert YouTube URL to embed format
-        // Supports: https://www.youtube.com/watch?v=ID, https://youtu.be/ID, etc.
         $url = $this->video_url;
         $videoId = '';
 
@@ -25,5 +23,13 @@ class Lesson extends Model
         }
 
         return $videoId ? "https://www.youtube.com/embed/{$videoId}" : null;
+    }
+
+    public function getContentUrlAttribute()
+    {
+        if ($this->type === 'pdf' && $this->content_path) {
+            return asset('storage/' . $this->content_path);
+        }
+        return null;
     }
 }

@@ -178,36 +178,64 @@
 
                                     <!-- Edit Lesson Modal -->
                                     <div class="modal fade" id="editLessonModal{{ $lesson->id }}" tabindex="-1">
-                                        <div class="modal-dialog modal-dialog-centered">
-                                            <form action="{{ route('admin.courses.lessons.update', [$course, $lesson]) }}" method="POST" class="w-100 text-start">
-                                                @csrf @method('PUT')
-                                                <div class="modal-content">
-                                                    <div class="modal-header bg-light">
-                                                        <h5 class="modal-title fw-bold text-dark"><i class="fas fa-edit text-primary me-2"></i>Edit Lesson</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <div class="mb-4">
-                                                            <label class="form-label fw-bold text-muted small text-uppercase">Lesson Title</label>
-                                                            <input type="text" name="title" class="form-control" value="{{ $lesson->title }}" required>
-                                                        </div>
-                                                        <div class="mb-4">
-                                                            <label class="form-label fw-bold text-muted small text-uppercase">YouTube Video URL</label>
-                                                            <input type="url" name="video_url" class="form-control" value="{{ $lesson->video_url }}" required>
-                                                        </div>
-                                                        <div class="mb-2">
-                                                            <label class="form-label fw-bold text-muted small text-uppercase">Video Duration (Minutes)</label>
-                                                            <input type="number" name="duration_minutes" class="form-control" value="{{ $lesson->duration_seconds ? floor($lesson->duration_seconds / 60) : '' }}">
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer bg-light">
-                                                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
-                                                        <button type="submit" class="btn btn-gradient-primary">Update Lesson</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
+                                         <div class="modal-dialog modal-dialog-centered">
+                                             <form action="{{ route('admin.courses.lessons.update', [$course, $lesson]) }}" method="POST" enctype="multipart/form-data" class="w-100 text-start">
+                                                 @csrf @method('PUT')
+                                                 <div class="modal-content">
+                                                     <div class="modal-header bg-light">
+                                                         <h5 class="modal-title fw-bold text-dark"><i class="fas fa-edit text-primary me-2"></i>Edit Lesson</h5>
+                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                     </div>
+                                                     <div class="modal-body">
+                                                         <div class="mb-4">
+                                                             <label class="form-label fw-bold text-muted small text-uppercase">Lesson Title</label>
+                                                             <input type="text" name="title" class="form-control" value="{{ $lesson->title }}" required>
+                                                         </div>
+                                                         <div class="mb-4">
+                                                             <label class="form-label fw-bold text-muted small text-uppercase">Lesson Type</label>
+                                                             <select name="type" class="form-select" id="lesson-type-edit-{{ $lesson->id }}" onchange="toggleLessonInputEdit('{{ $lesson->id }}', this.value)">
+                                                                 <option value="video" {{ $lesson->type == 'video' ? 'selected' : '' }}>YouTube Video</option>
+                                                                 <option value="pdf" {{ $lesson->type == 'pdf' ? 'selected' : '' }}>PDF Document</option>
+                                                             </select>
+                                                         </div>
+                                                         <div class="mb-4 {{ $lesson->type == 'pdf' ? 'd-none' : '' }}" id="video-input-group-edit-{{ $lesson->id }}">
+                                                             <label class="form-label fw-bold text-muted small text-uppercase">YouTube Video URL</label>
+                                                             <input type="url" name="video_url" class="form-control" value="{{ $lesson->video_url }}">
+                                                         </div>
+                                                         <div class="mb-4 {{ $lesson->type == 'video' ? 'd-none' : '' }}" id="pdf-input-group-edit-{{ $lesson->id }}">
+                                                             <label class="form-label fw-bold text-muted small text-uppercase">Replace PDF (Optional)</label>
+                                                             @if($lesson->content_path)
+                                                                <div class="small text-muted mb-2"><i class="fas fa-file-pdf me-1"></i> Current file: {{ basename($lesson->content_path) }}</div>
+                                                             @endif
+                                                             <input type="file" name="pdf_file" class="form-control" accept="application/pdf">
+                                                         </div>
+                                                         <div class="mb-2">
+                                                             <label class="form-label fw-bold text-muted small text-uppercase">Time Requirement (Minutes)</label>
+                                                             <input type="number" name="duration_minutes" class="form-control" value="{{ $lesson->duration_seconds ? floor($lesson->duration_seconds / 60) : '' }}">
+                                                         </div>
+                                                     </div>
+                                                     <div class="modal-footer bg-light">
+                                                         <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                                                         <button type="submit" class="btn btn-primary rounded-pill px-4">Save Changes</button>
+                                                     </div>
+                                                 </div>
+                                             </form>
+                                         </div>
+                                     </div>
+
+                                     <script>
+                                        function toggleLessonInputEdit(id, type) {
+                                            const videoGroup = document.getElementById('video-input-group-edit-' + id);
+                                            const pdfGroup = document.getElementById('pdf-input-group-edit-' + id);
+                                            if (type === 'pdf') {
+                                                videoGroup.classList.add('d-none');
+                                                pdfGroup.classList.remove('d-none');
+                                            } else {
+                                                videoGroup.classList.remove('d-none');
+                                                pdfGroup.classList.add('d-none');
+                                            }
+                                        }
+                                     </script>
                                 </td>
                             </tr>
                             @empty
@@ -323,7 +351,7 @@
 
     <div class="modal fade" id="addLessonModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <form action="{{ route('admin.courses.lessons.store', $course) }}" method="POST" class="w-100">
+            <form action="{{ route('admin.courses.lessons.store', $course) }}" method="POST" enctype="multipart/form-data" class="w-100">
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header bg-light">
@@ -336,13 +364,24 @@
                             <input type="text" name="title" class="form-control" placeholder="e.g. Introduction to Routing" required>
                         </div>
                         <div class="mb-4">
+                            <label class="form-label fw-bold text-muted small text-uppercase">Lesson Type</label>
+                            <select name="type" class="form-select" id="lesson-type-select" onchange="toggleLessonInput(this.value)">
+                                <option value="video">YouTube Video</option>
+                                <option value="pdf">PDF Document</option>
+                            </select>
+                        </div>
+                        <div class="mb-4" id="video-input-group">
                             <label class="form-label fw-bold text-muted small text-uppercase">YouTube Video URL</label>
-                            <input type="url" name="video_url" class="form-control" placeholder="https://www.youtube.com/watch?v=..." required>
+                            <input type="url" name="video_url" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+                        </div>
+                        <div class="mb-4 d-none" id="pdf-input-group">
+                            <label class="form-label fw-bold text-muted small text-uppercase">Upload PDF Lesson</label>
+                            <input type="file" name="pdf_file" class="form-control" accept="application/pdf">
                         </div>
                         <div class="mb-2">
-                            <label class="form-label fw-bold text-muted small text-uppercase">Video Duration (Minutes)</label>
+                            <label class="form-label fw-bold text-muted small text-uppercase">Time Requirement (Minutes)</label>
                             <input type="number" name="duration_minutes" class="form-control" placeholder="e.g. 15">
-                            <div class="form-text small">Leave blank to just show lesson count instead of time.</div>
+                            <div class="form-text small">How long should it take to complete this lesson?</div>
                         </div>
                     </div>
                     <div class="modal-footer bg-light">
@@ -353,6 +392,20 @@
             </form>
         </div>
     </div>
+
+    <script>
+        function toggleLessonInput(type) {
+            const videoGroup = document.getElementById('video-input-group');
+            const pdfGroup = document.getElementById('pdf-input-group');
+            if (type === 'pdf') {
+                videoGroup.classList.add('d-none');
+                pdfGroup.classList.remove('d-none');
+            } else {
+                videoGroup.classList.remove('d-none');
+                pdfGroup.classList.add('d-none');
+            }
+        }
+    </script>
 
     <div class="modal fade" id="createQuizModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
