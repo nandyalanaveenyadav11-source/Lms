@@ -14,11 +14,15 @@ class AppServiceProvider extends ServiceProvider
         //
     }
 
+    use Illuminate\Support\Facades\URL;
+    
     /**
      * Bootstrap any application services.
      */
     public function boot(): void
     {
-        //
+        if (app()->environment('production')) {
+            URL::forceScheme('https');
+        }
     }
 }
