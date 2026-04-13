@@ -16,7 +16,11 @@ class VpnRestriction
     public function handle(Request $request, Closure $next): Response
     {
         $allowedIps = env('ALLOWED_VPN_IP');
-        $userIp = $request->ip();
+        
+        // Try to get the real IP from X-Forwarded-For (Cloud platforms like Railway)
+        $userIp = $request->header('X-Forwarded-For') 
+                  ? explode(',', $request->header('X-Forwarded-For'))[0] 
+                  : $request->ip();
 
         // Localhost/Internal is always allowed for development
         if ($userIp === '127.0.0.1' || $userIp === '::1' || strpos($userIp, '192.168.') === 0) {
@@ -33,7 +37,8 @@ class VpnRestriction
 
         // Block if user IP is not in the allowed list
         if (!in_array($userIp, $allowedArray)) {
-            abort(403, 'Access Denied: This platform is only accessible when connected to the Kadellabs Pritunl VPN.');
+            $msg = 'Access Denied: This platform is only accessible when connected to the Kadellabs Pritunl VPN. (Detected IP: ' . $userIp . ')';
+            abort(403, $msg);
         }
 
         return $next($request);
